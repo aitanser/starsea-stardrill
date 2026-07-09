@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>星习 · 刷题工具</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+    <!-- ===== 顶部导航 ===== -->
+    <header class="topbar" id="topbar">
+        <div class="brand">
+            <i class="fas fa-book-open icon"></i>
+            <span id="mainTitle"></span>
+            <span class="sub" id="subTitle"></span>
+        </div>
+        <div class="right">
+            <button class="icon-btn" id="fontDecBtn" title="缩小字体"><i class="fas fa-font" style="font-size:14px;"></i><i class="fas fa-minus" style="font-size:12px;"></i></button>
+            <button class="icon-btn" id="fontIncBtn" title="放大字体"><i class="fas fa-font" style="font-size:14px;"></i><i class="fas fa-plus" style="font-size:12px;"></i></button>
+            <span class="badge-progress" id="progressBadge">0 / 0</span>
+            <span class="save-dot" id="saveDot"></span>
+            <span id="saveStatus" style="font-size:12px;color:var(--text-muted);display:none;">已保存</span>
+            <button class="icon-btn" id="themeToggle" aria-label="切换主题"><i class="fas fa-moon"></i></button>
+            <button class="icon-btn" id="drawerToggleBtn" aria-label="题库列表"><i class="fas fa-list-ul"></i></button>
+        </div>
+    </header>
+
+    <!-- ===== 模式切换 ===== -->
+    <div class="mode-tabs" id="modeTabs">
+        <button class="mode-tab active" data-mode="sequential"><i class="fas fa-list-ul"></i> 顺序</button>
+        <button class="mode-tab" data-mode="random"><i class="fas fa-random"></i> 随机</button>
+        <button class="mode-tab" data-mode="wrong"><i class="fas fa-times-circle"></i> 错题 <span class="count" id="wrongCountTab">0</span></button>
+        <button class="mode-tab" data-mode="review"><i class="fas fa-sync-alt"></i> 复习 <span class="count" id="reviewCountTab">0</span></button>
+        <button class="mode-tab" data-mode="favorite"><i class="fas fa-star"></i> 收藏 <span class="count" id="favCountTab">0</span></button>
+        <div class="feature-toggles">
+            <button class="feature-btn" id="shuffleOptionsToggle"><i class="fas fa-random"></i> 乱序</button>
+            <button class="feature-btn" id="reciteModeToggle"><i class="fas fa-book"></i> 背诵</button>
+        </div>
+    </div>
+
+    <!-- ===== 顶部激励条 ===== -->
+    <div class="motivation-bar">
+        <div class="motivation-item">
+            <i class="fas fa-fire motivation-icon"></i>
+            <span class="motivation-value" id="miniStreak">0</span>
+            <span class="motivation-label">连续</span>
+        </div>
+        <div class="motivation-divider"></div>
+        <div class="motivation-item">
+            <i class="fas fa-check-circle motivation-icon"></i>
+            <span class="motivation-value" id="miniRate">0%</span>
+            <span class="motivation-label">正确率</span>
+        </div>
+        <div class="motivation-divider"></div>
+        <div class="motivation-item">
+            <i class="fas fa-book motivation-icon"></i>
+            <span class="motivation-value" id="miniProgress">0/0</span>
+            <span class="motivation-label">已答</span>
+        </div>
+        <div class="motivation-divider"></div>
+        <div class="motivation-item">
+            <i class="fas fa-star motivation-icon"></i>
+            <span class="motivation-value" id="miniMastered">0</span>
+            <span class="motivation-label">掌握</span>
+        </div>
+    </div>
+
+    <!-- ===== 进度条 ===== -->
+    <div class="progress-wrapper">
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+        <span class="progress-label" id="progressLabel">0 / 0</span>
+        <div class="daily-goal">
+            <i class="fas fa-bullseye"></i> 今日 <span id="todayProgress">0</span> / <input type="number" id="dailyGoalInput" value="10" min="1" max="999" /> 题
+        </div>
+    </div>
+
+    <!-- ===== 统计折叠面板 ===== -->
+    <div class="stats-collapsible" id="statsCollapsible">
+        <div class="stats-header" id="statsToggle">
+            <span><i class="fas fa-chart-simple"></i> 学习统计</span>
+            <span class="stats-toggle-arrow" id="statsArrow"><i class="fas fa-chevron-down"></i></span>
+        </div>
+        <div class="stats-body" id="statsBody">
+            <div class="stats-grid-dash">
+                <div class="stat-dash-item"><div class="num blue" id="dashTotal">0</div><div class="label"><i class="fas fa-database"></i> 总题</div></div>
+                <div class="stat-dash-item"><div class="num green" id="dashCorrect">0</div><div class="label"><i class="fas fa-check-circle"></i> 正确</div></div>
+                <div class="stat-dash-item"><div class="num red" id="dashWrong">0</div><div class="label"><i class="fas fa-times-circle"></i> 错误</div></div>
+                <div class="stat-dash-item"><div class="num orange" id="dashRate">0%</div><div class="label"><i class="fas fa-percent"></i> 正确率</div></div>
+                <div class="stat-dash-item"><div class="num" id="dashStreak" style="color:var(--warning);">0</div><div class="label"><i class="fas fa-fire"></i> 连续</div></div>
+                <div class="stat-dash-item"><div class="num" id="dashMastered" style="color:var(--success);">0</div><div class="label"><i class="fas fa-star"></i> 掌握</div></div>
+                <div class="stat-dash-item"><div class="num" id="dashTotalTime" style="color:var(--primary);">0s</div><div class="label"><i class="fas fa-clock"></i> 总用时</div></div>
+                <div class="stat-dash-item"><div class="num" id="dashAvgTime" style="color:var(--primary);">0s</div><div class="label"><i class="fas fa-stopwatch"></i> 平均/题</div></div>
+            </div>
+            <div class="heatmap-wrapper">
+                <div class="heatmap-title"><i class="fas fa-calendar-alt"></i> 本周学习热力图</div>
+                <div class="heatmap-grid" id="heatmapGrid"></div>
+                <div class="heatmap-legend">
+                    <span>少</span>
+                    <span class="dot l0"></span>
+                    <span class="dot l1"></span>
+                    <span class="dot l2"></span>
+                    <span class="dot l3"></span>
+                    <span class="dot l4"></span>
+                    <span class="dot l5"></span>
+                    <span>多</span>
+                </div>
+            </div>
+            <div class="stat-chart"><div class="chart-title"><i class="fas fa-chart-pie"></i> 各题型正确率</div><div id="typeChart"></div></div>
+            <div class="stat-chart"><div class="chart-title"><i class="fas fa-layer-group"></i> 掌握程度分布</div><div id="masteryChart"></div></div>
+        </div>
+    </div>
+
+    <!-- ===== 题目容器 ===== -->
+    <div class="question-container" id="questionContainer"></div>
+
+    <!-- ===== 底部工具栏 ===== -->
+    <div class="bottom-toolbar" id="bottomToolbar">
+        <div class="nav-group">
+            <button class="btn btn-outline" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+            <button class="btn btn-outline" id="resetBtn"><i class="fas fa-undo-alt"></i></button>
+            <button class="btn btn-outline" id="shuffleBtn"><i class="fas fa-random"></i></button>
+            <button class="btn btn-outline" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="right-group">
+            <button class="timer-btn" id="timerToggle"><i class="fas fa-hourglass-half"></i> <span id="timerDisplay" class="timer-display">25:00</span></button>
+            <button class="icon-btn" id="shortcutsToggle" title="快捷键"><i class="fas fa-keyboard"></i></button>
+            <button class="icon-btn" id="moreToggleBtn" title="更多"><i class="fas fa-ellipsis-v"></i></button>
+        </div>
+    </div>
+
+    <!-- ===== 专注遮罩 ===== -->
+    <div class="focus-overlay" id="focusOverlay">
+        <div>⏰ 时间到！</div>
+        <div class="sub" id="focusMessage">休息一下吧</div>
+        <button class="btn" id="focusDismissBtn">继续刷题</button>
+    </div>
+
+    <!-- ===== 快捷键提示 ===== -->
+    <div class="shortcuts-hint" id="shortcutsHint">
+        <kbd>←</kbd> <kbd>→</kbd> 翻页 &nbsp;·&nbsp; <kbd>1-4</kbd> 选选项 &nbsp;·&nbsp; <kbd>Enter</kbd> 提交 &nbsp;·&nbsp; <kbd>R</kbd> 重置 &nbsp;·&nbsp; <kbd>Space</kbd> 翻转背诵
+    </div>
+
+    <!-- ===== 更多菜单 ===== -->
+    <div class="more-dropdown" id="moreDropdown">
+        <button class="dropdown-item" id="exportTxtBtn"><i class="fas fa-file-alt"></i> 导出 TXT</button>
+        <button class="dropdown-item" id="exportCsvBtn"><i class="fas fa-file-csv"></i> 导出 CSV</button>
+        <button class="dropdown-item" id="exportJsonBtn"><i class="fas fa-file-code"></i> 导出 JSON</button>
+        <button class="dropdown-item" id="exportNoteBtn"><i class="fas fa-sticky-note"></i> 导出笔记</button>
+        <button class="dropdown-item" id="exportWrongBtn"><i class="fas fa-exclamation-triangle" style="color:var(--danger);"></i> 导出错题集</button>
+        <button class="dropdown-item" id="gotoWrongBtn"><i class="fas fa-times-circle"></i> 错题集</button>
+        <button class="dropdown-item danger" id="resetAllBtn"><i class="fas fa-trash-alt"></i> 重置全部</button>
+    </div>
+
+    <!-- ===== 抽屉 ===== -->
+    <div class="drawer-overlay" id="drawerOverlay">
+        <div class="drawer">
+            <div class="drawer-header">
+                <h2><i class="fas fa-list-ul"></i> 全部题目</h2>
+                <div class="tabs">
+                    <button class="active" data-drawer-tab="all"><i class="fas fa-th-list"></i> 全部</button>
+                    <button data-drawer-tab="wrong"><i class="fas fa-times-circle"></i> 错题</button>
+                    <button data-drawer-tab="review"><i class="fas fa-sync-alt"></i> 复习</button>
+                    <button data-drawer-tab="favorite"><i class="fas fa-star"></i> 收藏</button>
+                </div>
+                <button class="drawer-close" id="drawerCloseBtn"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="drawer-list" id="drawerList"></div>
+        </div>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="decrypt.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

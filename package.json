@@ -1,0 +1,51 @@
+{
+  "name": "starsea-quiz",
+  "version": "1.0.0",
+  "description": "星习刷题工具 - 轻量级全功能单页应用",
+  "main": "index.html",
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "test:ci": "jest --ci --coverage --maxWorkers=2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-username/starsea-quiz.git"
+  },
+  "keywords": [
+    "quiz",
+    "flashcard",
+    "spaced-repetition",
+    "study-tool",
+    "single-page-app"
+  ],
+  "author": "蓝域星河有限公司集团 · 星海量子开发组",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jsdom": "^24.0.0"
+  },
+  "jest": {
+    "setupFilesAfterEnv": ["<rootDir>/tests/setup.js"],
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "app.js",
+      "!**/node_modules/**",
+      "!**/tests/**"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 60,
+        "functions": 60,
+        "lines": 60,
+        "statements": 60
+      }
+    },
+    "verbose": true,
+    "testTimeout": 10000
+  }
+}
